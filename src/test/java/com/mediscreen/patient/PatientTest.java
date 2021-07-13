@@ -4,16 +4,14 @@ import com.mediscreen.patient.DTO.PatientDTO;
 import com.mediscreen.patient.domain.Patient;
 import com.mediscreen.patient.repositories.PatientRepository;
 import com.mediscreen.patient.services.PatientServices;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,14 +26,15 @@ public class PatientTest {
 
 
     private Patient patient = new Patient();
+    private Patient patient2 = new Patient();
     private PatientDTO patientDTO = new PatientDTO();
+    private PatientDTO patientDTO2 = new PatientDTO();
     private int id;
     private LocalDate birthD ;
 
     @BeforeEach
     public  void setup() {
 
-        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
         DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         birthD = LocalDate.parse("01/01/1995",df);
 
@@ -48,6 +47,13 @@ public class PatientTest {
         patient.setAdressePostale("1 rue des tests");
         patient.setNumeroDeTelephone("0601010101");
 
+        patient2.setPrenom("test222");
+        patient2.setNom("Test222");
+        patient2.setDateDeNaissance(birthD);
+        patient2.setGenre("H");
+        patient2.setAdressePostale("2 rue des tests");
+        patient2.setNumeroDeTelephone("0602020202");
+
 
         patientDTO.setPrenom("test");
         patientDTO.setNom("Test");
@@ -55,6 +61,13 @@ public class PatientTest {
         patientDTO.setGenre("F");
         patientDTO.setAdressePostale("1 rue des tests");
         patientDTO.setNumeroDeTelephone("0601010101");
+
+        patientDTO2.setPrenom("test2");
+        patientDTO2.setNom("Test2");
+        patientDTO2.setDateDeNaissance(birthD);
+        patientDTO2.setGenre("H");
+        patientDTO2.setAdressePostale("2 rue des tests");
+        patientDTO2.setNumeroDeTelephone("0602020202");
 
     }
 
@@ -72,6 +85,17 @@ public class PatientTest {
 
         assertThat(patientDTO.getPrenom()).isEqualTo("test99");
 
+    }
+
+    @Test
+    public void getPatientList(){
+
+        patientRepository.save(patient);
+        patientRepository.save(patient2);
+
+        List<PatientDTO> patientDTOList = patientServices.getPatientList();
+
+        assertThat(patientDTOList.size()).isEqualTo(2);
     }
 
     @Test

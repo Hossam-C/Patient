@@ -1,5 +1,9 @@
 package com.mediscreen.patient.DTO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
 import javax.persistence.Column;
 import java.time.LocalDate;
 import java.util.Date;
@@ -9,6 +13,7 @@ public class PatientDTO {
     private Integer id;
     private String prenom;
     private String nom;
+    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate dateDeNaissance;
     private String genre;
     private String adressePostale;

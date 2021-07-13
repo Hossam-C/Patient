@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Transactional
@@ -24,6 +26,7 @@ public class PatientServicesImpl implements PatientServices {
         PatientDTO patientDTO = new PatientDTO();
         patient =  patientRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
 
+        patientDTO.setId(patient.getId());
         patientDTO.setPrenom(patient.getPrenom());
         patientDTO.setNom(patient.getNom());
         patientDTO.setDateDeNaissance(patient.getDateDeNaissance());
@@ -33,6 +36,34 @@ public class PatientServicesImpl implements PatientServices {
 
         return patientDTO;
 
+    }
+
+    @Override
+    public List<PatientDTO> getPatientList(){
+
+        List<Patient> patientList;
+        List<PatientDTO> patientListDTO = new ArrayList<>();
+
+        patientList = patientRepository.findAll();
+
+        for (Patient patient:patientList){
+
+            PatientDTO patientDTO = new PatientDTO();
+
+            patientDTO.setId(patient.getId());
+            patientDTO.setPrenom(patient.getPrenom());
+            patientDTO.setNom(patient.getNom());
+            patientDTO.setDateDeNaissance(patient.getDateDeNaissance());
+            patientDTO.setGenre(patient.getGenre());
+            patientDTO.setAdressePostale(patient.getAdressePostale());
+            patientDTO.setNumeroDeTelephone(patient.getNumeroDeTelephone());
+
+            patientListDTO.add(patientDTO);
+
+        }
+
+
+        return patientListDTO;
     }
 
     @Override
@@ -70,6 +101,13 @@ public class PatientServicesImpl implements PatientServices {
         patientRepository.save(patient);
 
         return patientDTO;
+
+    }
+
+    @Override
+    public void deletePatient(Integer id) {
+
+        patientRepository.deleteById(id);
 
     }
 }
