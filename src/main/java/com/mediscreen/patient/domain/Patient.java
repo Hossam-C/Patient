@@ -36,6 +36,16 @@ public class Patient {
     public Patient() {
     }
 
+    public Patient(Integer id, String prenom, String nom, LocalDate dateDeNaissance, String genre, String adressePostale, String numeroDeTelephone) {
+        this.id = id;
+        this.prenom = prenom;
+        this.nom = nom;
+        this.dateDeNaissance = dateDeNaissance;
+        this.genre = genre;
+        this.adressePostale = adressePostale;
+        this.numeroDeTelephone = numeroDeTelephone;
+    }
+
     public Integer getId() {
         return id;
     }

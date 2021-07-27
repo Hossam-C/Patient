@@ -105,9 +105,35 @@ public class PatientServicesImpl implements PatientServices {
     }
 
     @Override
-    public void deletePatient(Integer id) {
+    public PatientDTO deletePatient(Integer id) {
 
+        Patient patient = patientRepository.getById(id);
+        PatientDTO patientDTO = new PatientDTO(patient.getId(),patient.getPrenom(),patient.getNom(),patient.getDateDeNaissance(),patient.getGenre(),patient.getAdressePostale(),patient.getNumeroDeTelephone());
         patientRepository.deleteById(id);
+        return patientDTO;
+
+    }
+
+    @Override
+    public List<PatientDTO> getPatientByName(String name){
+
+        List<Patient> patientList = patientRepository.findByNom(name);
+        List<PatientDTO> patientDTOList = new ArrayList<>();
+
+        for (Patient patient : patientList){
+            PatientDTO patientDTO = new PatientDTO();
+            patientDTO.setId(patient.getId());
+            patientDTO.setPrenom(patient.getPrenom());
+            patientDTO.setNom(patient.getNom());
+            patientDTO.setDateDeNaissance(patient.getDateDeNaissance());
+            patientDTO.setGenre(patient.getGenre());
+            patientDTO.setAdressePostale(patient.getAdressePostale());
+            patientDTO.setNumeroDeTelephone(patient.getNumeroDeTelephone());
+
+            patientDTOList.add(patientDTO);
+        }
+
+        return patientDTOList;
 
     }
 }

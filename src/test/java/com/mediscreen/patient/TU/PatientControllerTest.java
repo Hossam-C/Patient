@@ -2,8 +2,9 @@ package com.mediscreen.patient.TU;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediscreen.patient.DTO.PatientDTO;
+import com.mediscreen.patient.domain.Patient;
+import com.mediscreen.patient.repositories.PatientRepository;
 import com.mediscreen.patient.services.PatientServices;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -38,9 +38,16 @@ public class PatientControllerTest {
     @MockBean
     private PatientServices patientServices;
 
+    @MockBean
+    private PatientRepository patientRepository;
+
     private PatientDTO patientDTO ;
 
     private PatientDTO patientDTO2 ;
+
+    private Patient patient ;
+
+    private Patient patient2 ;
 
     private List<PatientDTO> patientDTOList = new ArrayList<>();
 
@@ -58,6 +65,9 @@ public class PatientControllerTest {
         patientDTO = new PatientDTO(id,"testt","TESTT", birthD,"H","10 avenue des tests","0605040302");
         patientDTO2 = new PatientDTO(id,"testt2","TESTT2", birthD,"F","20 avenue des tests","0607080910");
 
+        patient = new Patient(id,"testt","TESTT", birthD,"H","10 avenue des tests","0605040302");
+        patient2 = new Patient(id,"testt2","TESTT2", birthD,"F","20 avenue des tests","0607080910");
+
         patientDTOList.add(patientDTO);
         patientDTOList.add(patientDTO);
 
@@ -74,8 +84,10 @@ public class PatientControllerTest {
     public void getPatient() throws Exception {
 
         when(patientServices.getPatient(anyInt())).thenReturn(patientDTO);
+        when(patientRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(patient));
 
-        mockMvc.perform(get("/getPatient?id="+id))
+
+        mockMvc.perform(get("/getPatient/"+id))
                 .andExpect(status().isOk());
     }
 
@@ -83,6 +95,7 @@ public class PatientControllerTest {
     public void getPatientList() throws Exception{
 
         when(patientServices.getPatientList()).thenReturn(patientDTOList);
+
 
         mockMvc.perform((get("/getPatientList")))
                 .andExpect(status().isOk());
@@ -104,12 +117,38 @@ public class PatientControllerTest {
     public void updatePatient() throws Exception{
 
         when(patientServices.updatePatient(any())).thenReturn(patientDTO);
+        when(patientRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(patient));
 
         mockMvc.perform((post("/updatePatient"))
                 .content(asJsonString(patientDTO))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isAccepted());
+    }
+
+    @Test
+    public void deletePatient() throws Exception{
+
+        when(patientServices.deletePatient(any())).thenReturn(patientDTO);
+        when(patientRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(patient));
+
+        mockMvc.perform((get("/deletePatient/1"))
+                .content(asJsonString(patientDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getPatientsByName() throws Exception{
+
+        when(patientServices.getPatientByName(any())).thenReturn(patientDTOList);
+
+        mockMvc.perform((get("/patientByFamily/Test"))
+                .content(asJsonString(patientDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
 

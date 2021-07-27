@@ -9,11 +9,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class PatientTest {
@@ -27,8 +29,11 @@ public class PatientTest {
 
     private Patient patient = new Patient();
     private Patient patient2 = new Patient();
+    private Patient patient3 = new Patient();
     private PatientDTO patientDTO = new PatientDTO();
     private PatientDTO patientDTO2 = new PatientDTO();
+    private PatientDTO patientDTO3 = new PatientDTO();
+
     private int id;
     private LocalDate birthD ;
 
@@ -54,6 +59,13 @@ public class PatientTest {
         patient2.setAdressePostale("2 rue des tests");
         patient2.setNumeroDeTelephone("0602020202");
 
+        patient3.setPrenom("test");
+        patient3.setNom("Test99");
+        patient3.setDateDeNaissance(birthD);
+        patient3.setGenre("H");
+        patient3.setAdressePostale("1 rue des tests");
+        patient3.setNumeroDeTelephone("0602020202");
+
 
         patientDTO.setPrenom("test");
         patientDTO.setNom("Test");
@@ -69,13 +81,24 @@ public class PatientTest {
         patientDTO2.setAdressePostale("2 rue des tests");
         patientDTO2.setNumeroDeTelephone("0602020202");
 
+        patientDTO3.setPrenom("test");
+        patientDTO2.setNom("Test");
+        patientDTO2.setDateDeNaissance(birthD);
+        patientDTO2.setGenre("H");
+        patientDTO2.setAdressePostale("1 rue des tests");
+        patientDTO2.setNumeroDeTelephone("0602020202");
+
+        patientRepository.save(patient);
+        patientRepository.save(patient2);
+        patientRepository.save(patient3);
+
     }
 
 
     @Test
     public void getPatientTest() {
 
-        patientRepository.save(patient);
+       // patientRepository.save(patient);
 
         System.out.println("Date : "+patientDTO.getDateDeNaissance());
 
@@ -90,12 +113,12 @@ public class PatientTest {
     @Test
     public void getPatientList(){
 
-        patientRepository.save(patient);
-        patientRepository.save(patient2);
+    //    patientRepository.save(patient);
+     //   patientRepository.save(patient2);
 
         List<PatientDTO> patientDTOList = patientServices.getPatientList();
 
-        assertThat(patientDTOList.size()).isEqualTo(2);
+        assertThat(patientDTOList.size()).isEqualTo(3);
     }
 
     @Test
@@ -112,7 +135,7 @@ public class PatientTest {
     @Test
     public void updatePatientTest() {
 
-        patientRepository.save(patient);
+       // patientRepository.save(patient);
 
         id = patientRepository.findPatientByPrenomAndNomAndDateDeNaissance("test99","Test99", birthD).getId();
 
@@ -121,6 +144,15 @@ public class PatientTest {
         patientServices.updatePatient(patientDTO);
 
         assertThat(patientRepository.findPatientByPrenomAndNomAndDateDeNaissance("test","Test", birthD).getNom()).isEqualTo("Test");
+
+    }
+
+    @Test
+    public void getPatientsByFamily(){
+
+        List<PatientDTO> patientDTOList =  patientServices.getPatientByName("Test99");
+
+        assertThat(patientDTOList.size()).isEqualTo(2);
 
     }
 }
